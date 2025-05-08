@@ -23,6 +23,10 @@
 # misc
 .DS_Store
 *.pem
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # debug
 npm-debug.log*
@@ -39,3 +43,105 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Turbo
+.turbo
+
+# Generated files
+app/generated/
+
+# Prisma
+# Keep these files:
+# - prisma/schema.prisma
+# - prisma/migrations/
+# - prisma/migrations/migration_lock.toml
+# Ignore these files:
+prisma/*.db
+prisma/*.db-journal
+prisma/migrations/dev/
+prisma/migrations/.prisma/
+
+# Generated files to keep
+!.next/static/
+!.next/static/chunks/
+!.next/static/media/
+!.next/static/css/
+!.next/static/js/
+!.next/static/images/
+!.next/static/fonts/
+!.next/static/svg/
+!.next/static/json/
+!.next/static/meta/
+!.next/static/development/
+!.next/static/production/
+!.next/static/server/
+!.next/static/client/
+!.next/static/edge/
+!.next/static/worker/
+!.next/static/fallback/
+!.next/static/error/
+!.next/static/404/
+!.next/static/500/
+!.next/static/loading/
+!.next/static/success/
+!.next/static/warning/
+!.next/static/info/
+!.next/static/debug/
+!.next/static/trace/
+!.next/static/metrics/
+!.next/static/analytics/
+!.next/static/telemetry/
+!.next/static/performance/
+!.next/static/security/
+!.next/static/accessibility/
+!.next/static/seo/
+!.next/static/sitemap/
+!.next/static/robots/
+!.next/static/manifest/
+!.next/static/service-worker/
+!.next/static/workbox/
+!.next/static/sw/
+!.next/static/pwa/
+!.next/static/amp/
+!.next/static/rss/
+!.next/static/atom/
+!.next/static/feed/
+!.next/static/sitemap.xml
+!.next/static/robots.txt
+!.next/static/manifest.json
+!.next/static/service-worker.js
+!.next/static/workbox-*.js
+!.next/static/sw.js
+!.next/static/pwa.js
+!.next/static/amp.js
+!.next/static/rss.xml
+!.next/static/atom.xml
+!.next/static/feed.xml

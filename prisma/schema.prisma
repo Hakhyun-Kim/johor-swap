@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  items         Item[]
+  location      Location? @relation(fields: [locationId], references: [id])
+  locationId    String?
+}
+
+model Item {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  condition   String    // new, like-new, good, fair
+  status      String    @default("active") // active, sold, deleted
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  seller      User      @relation(fields: [sellerId], references: [id])
+  sellerId    String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  location    Location  @relation(fields: [locationId], references: [id])
+  locationId  String
+  images      Image[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  items       Item[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Location {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  items       Item[]
+  users       User[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
