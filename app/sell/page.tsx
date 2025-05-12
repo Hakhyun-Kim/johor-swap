@@ -1,16 +1,27 @@
-import Link from 'next/link';
-import { prisma } from '@/app/lib/prisma';
+// import Link from 'next/link'; // Removed unused import
+// import { prisma } from '@/app/lib/prisma'; // Removed unused import
+
+// Define minimal types
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Location {
+  id: string;
+  name: string;
+}
 
 async function getCategories() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch categories');
-  return res.json();
+  return res.json() as Promise<Category[]>;
 }
 
 async function getLocations() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/locations`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch locations');
-  return res.json();
+  return res.json() as Promise<Location[]>;
 }
 
 export default async function SellPage() {
@@ -72,7 +83,7 @@ export default async function SellPage() {
                 required
               >
                 <option value="">Select a category</option>
-                {categories.map((category: any) => (
+                {categories.map((category: Category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
@@ -156,7 +167,7 @@ export default async function SellPage() {
               required
             >
               <option value="">Select area</option>
-              {locations.map((location: any) => (
+              {locations.map((location: Location) => (
                 <option key={location.id} value={location.id}>
                   {location.name}
                 </option>

@@ -1,5 +1,20 @@
 import Link from 'next/link';
-import { prisma } from '@/app/lib/prisma';
+import Image from 'next/image';
+// import { prisma } from '@/app/lib/prisma'; // Removed unused import
+
+// Define minimal types
+interface Category { id: string; name: string; }
+interface Location { id: string; name: string; }
+interface Item {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  condition: string;
+  category: Category;
+  location: Location;
+  images: { url: string }[];
+}
 
 async function getCategories() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, { cache: 'no-store' });
@@ -29,10 +44,11 @@ async function getItems(searchParams: { [key: string]: string | string[] | undef
 export default async function MarketplacePage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const [items, categories, locations] = await Promise.all([
-    getItems(searchParams),
+    getItems(resolvedSearchParams),
     getCategories(),
     getLocations(),
   ]);
@@ -62,7 +78,7 @@ export default async function MarketplacePage({
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-700 mb-2">Categories</h3>
               <div className="space-y-2">
-                {categories.map((category: any) => (
+                {categories.map((category: Category) => (
                   <label key={category.id} className="flex items-center">
                     <input
                       type="checkbox"
@@ -117,7 +133,7 @@ export default async function MarketplacePage({
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-700 mb-2">Location</h3>
               <div className="space-y-2">
-                {locations.map((location: any) => (
+                {locations.map((location: Location) => (
                   <label key={location.id} className="flex items-center">
                     <input
                       type="checkbox"
@@ -153,20 +169,19 @@ export default async function MarketplacePage({
 
           {/* Items */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((item: any) => (
+            {items.map((item: Item) => (
               <Link
                 key={item.id}
                 href={`/marketplace/${item.id}`}
                 className="bg-white rounded-lg shadow hover:shadow-lg transition"
               >
-                <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-t-lg">
-                  {item.images[0] && (
-                    <img
-                      src={item.images[0].url}
-                      alt={item.title}
-                      className="object-cover rounded-t-lg"
-                    />
-                  )}
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={item.images[0]?.url || '/placeholder.png'}
+                    alt={item.title}
+                    fill
+                    className="object-cover rounded-t-lg"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold mb-1">{item.title}</h3>

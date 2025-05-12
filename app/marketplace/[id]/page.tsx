@@ -1,14 +1,32 @@
 import Link from 'next/link';
-import { prisma } from '@/app/lib/prisma';
+import Image from 'next/image';
+// import { prisma } from '@/app/lib/prisma'; // Removed unused import
 
-async function getItem(id: string) {
+// Define minimal types
+interface Image { id?: string; url: string; }
+interface Seller { name: string; location?: { name: string } | null }
+interface Item {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  condition: string;
+  category: { name: string };
+  location: { name: string };
+  images: Image[];
+  createdAt: string;
+  seller: Seller;
+}
+
+async function getItem(id: string): Promise<Item> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch item');
   return res.json();
 }
 
-export default async function ItemPage({ params }: { params: { id: string } }) {
-  const item = await getItem(params.id);
+export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const item = await getItem(id);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -21,23 +39,24 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Images */}
         <div className="space-y-4">
-          <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden">
-            {item.images[0] && (
-              <img
-                src={item.images[0].url}
-                alt={item.title}
-                className="object-cover w-full h-full"
-              />
-            )}
+          <div className="relative h-96 w-full">
+            <Image
+              src={item.images[0]?.url || '/placeholder.png'}
+              alt={item.title}
+              fill
+              className="object-cover rounded-t-lg"
+              priority
+            />
           </div>
           {item.images.length > 1 && (
             <div className="grid grid-cols-4 gap-4">
-              {item.images.slice(1).map((image: any) => (
-                <div key={image.id} className="aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
-                  <img
+              {item.images.slice(1).map((image: Image, index: number) => (
+                <div key={image.id || image.url} className="relative h-24 w-24">
+                  <Image
                     src={image.url}
-                    alt={item.title}
-                    className="object-cover w-full h-full"
+                    alt={`${item.title} - Image ${index + 1}`}
+                    fill
+                    className="object-cover rounded-lg"
                   />
                 </div>
               ))}

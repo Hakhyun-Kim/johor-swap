@@ -1,13 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
 
+// Using the correct route segment config type
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const item = await prisma.item.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         category: true,
         location: true,
@@ -31,7 +33,7 @@ export async function GET(
 
     // Increment view count
     await prisma.item.update({
-      where: { id: params.id },
+      where: { id },
       data: { views: { increment: 1 } },
     });
 
@@ -46,15 +48,16 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const { title, description, price, condition, categoryId, locationId, status, images } = body;
 
     const item = await prisma.item.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(title && { title }),
         ...(description && { description }),
@@ -95,13 +98,14 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     // Soft delete by updating status
     const item = await prisma.item.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: 'deleted' },
     });
 
